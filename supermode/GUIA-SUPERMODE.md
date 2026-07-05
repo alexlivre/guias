@@ -8,7 +8,7 @@ Super Mode é um **modo de operação persistente** que combina comandos e skill
 
 ## Peças do Super Mode
 
-### Comandos (agents/commands/)
+### Comandos
 
 | Comando | Trigger | Função |
 |---------|---------|--------|
@@ -16,25 +16,23 @@ Super Mode é um **modo de operação persistente** que combina comandos e skill
 | **Pesquisa** | `/pesquisa` | Pesquisa progressiva em 3 rodadas + plano de implementação |
 | **Perguntas** | `/perguntas` | Análise somente leitura (diagnóstico sem modificar código) |
 
-### Skills (agents/skills/)
+### Skills
 
 | Skill | Função | Onde é usada |
 |-------|--------|--------------|
-| **gerenciar-uv** | Gerencia ambientes Python isolados (.venv) com `uv` | `supermode.md` (seção 2.1), `pesquisa.md` |
+| **gerenciar-uv** | Gerencia ambientes Python isolados (.venv) com `uv` | [`supermode.md:40`](agents/commands/supermode.md#L40), [`pesquisa.md:13`](agents/commands/pesquisa.md#L13), [`pesquisa.md:54`](agents/commands/pesquisa.md#L54) |
 
-### MCPs Utilizados
+### MCPs
 
-MCPs referenciados nos comandos do Super Mode:
-
-| MCP | Função | Referência |
-|-----|--------|------------|
-| **MiniMax_web_search** | Busca web geral (títulos + snippets + links) | `supermode.md`, `pesquisa.md` |
-| **webfetch / fetch_fetch** | Download de conteúdo de páginas web | `supermode.md`, `pesquisa.md` |
-| **github_search_repositories** | Busca repositórios no GitHub | `supermode.md`, `pesquisa.md` |
-| **github_search_code** | Busca código no GitHub | `supermode.md`, `pesquisa.md` |
-| **github_search_issues** | Busca issues no GitHub | `supermode.md`, `pesquisa.md` |
-| **sequential-thinking** | Raciocínio estruturado em etapas | `supermode.md`, `pesquisa.md` |
-| **MCP de análise de imagens** | Análise de imagens (quando disponível) | `supermode.md` (seção 3.2) |
+| MCP | Função | Onde é usado |
+|-----|--------|--------------|
+| **MiniMax_web_search** | Busca web geral (títulos + snippets + links) | [`supermode.md:48`](agents/commands/supermode.md#L48), [`pesquisa.md:18`](agents/commands/pesquisa.md#L18), [`pesquisa.md:25`](agents/commands/pesquisa.md#L25) |
+| **webfetch / fetch_fetch** | Download de conteúdo de páginas web | [`supermode.md:49`](agents/commands/supermode.md#L49), [`pesquisa.md:19`](agents/commands/pesquisa.md#L19), [`pesquisa.md:25`](agents/commands/pesquisa.md#L25) |
+| **github_search_repositories** | Busca repositórios no GitHub | [`supermode.md:50`](agents/commands/supermode.md#L50), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
+| **github_search_code** | Busca código no GitHub | [`supermode.md:51`](agents/commands/supermode.md#L51), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
+| **github_search_issues** | Busca issues no GitHub | [`supermode.md:52`](agents/commands/supermode.md#L52), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
+| **sequential-thinking** | Raciocínio estruturado em etapas | [`supermode.md:53`](agents/commands/supermode.md#L53), [`supermode.md:66-67`](agents/commands/supermode.md#L66), [`pesquisa.md:21`](agents/commands/pesquisa.md#L21), [`pesquisa.md:31`](agents/commands/pesquisa.md#L31), [`pesquisa.md:46`](agents/commands/pesquisa.md#L46), [`pesquisa.md:59`](agents/commands/pesquisa.md#L59) |
+| **MCP de análise de imagens** | Análise de imagens (quando disponível) | [`supermode.md:54`](agents/commands/supermode.md#L54), [`supermode.md:58-63`](agents/commands/supermode.md#L58) |
 
 ---
 
