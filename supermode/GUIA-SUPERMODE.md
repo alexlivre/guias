@@ -15,74 +15,26 @@ Super Mode é um **modo de operação persistente** que combina comandos e skill
 | **Super Mode** | `/supermode` | Ativa o modo persistente com auto-verificação contínua |
 | **Pesquisa** | `/pesquisa` | Pesquisa progressiva em 3 rodadas + plano de implementação |
 | **Perguntas** | `/perguntas` | Análise somente leitura (diagnóstico sem modificar código) |
-| **Commands Maker** | `/criar-comando` | Cria novos comandos `.md` prontos para uso |
 
-### Skills do Projeto (agents/skills/)
+### Skills (agents/skills/)
 
-| Skill | Descrição | Quando Usar |
-|-------|-----------|-------------|
-| **gerenciar-uv** | Gerencia ambientes Python isolados (.venv) com `uv` | Criar projeto Python, instalar pacotes, configurar ambiente |
+| Skill | Função | Onde é usada |
+|-------|--------|--------------|
+| **gerenciar-uv** | Gerencia ambientes Python isolados (.venv) com `uv` | `supermode.md` (seção 2.1), `pesquisa.md` |
 
-### Skills Instaladas no Sistema
+### MCPs Utilizados
 
-Skills disponíveis via `npx skills` ou instaladas localmente em `~/.agents/skills/`:
+MCPs referenciados nos comandos do Super Mode:
 
-| Skill | Categoria | Origem |
-|-------|-----------|--------|
-| **skill-creator** | Criação de skills | Superpowers |
-| **brainstorming** | Design e planejamento | Superpowers |
-| **test-driven-development** | Testes | Superpowers |
-| **systematic-debugging** | Debug | Superpowers |
-| **writing-plans** | Planejamento | Superpowers |
-| **executing-plans** | Execução | Superpowers |
-| **python-clean-code** | Qualidade Python | Comunidade |
-| **typescript-clean-code** | Qualidade TypeScript | Comunidade |
-| **frontend-design** | Design UI | Comunidade |
-| **pdf** | Manipulação PDF | Comunidade |
-| **docx** | Documentos Word | Comunidade |
-| **pptx** | Apresentações | Comunidade |
-| **xlsx** | Planilhas | Comunidade |
-| **image-create** | Geração de imagens | Comunidade |
-| **mcp-builder** | Criação de MCPs | Comunidade |
-| **find-skills** | Descoberta de skills | Superpowers |
-
----
-
-## MCPs (Model Context Protocol)
-
-### MCPs Padrão do Sistema
-
-MCPs que vêm configurados no OpenCode:
-
-| MCP | Função |
-|-----|--------|
-| **github** | Integração completa com GitHub (repos, issues, PRs, commits) |
-| **MiniMax_web_search** | Busca web geral (títulos + snippets + links) |
-| **MiniMax_understand_image** | Análise de imagens via MiniMax |
-| **sequential-thinking** | Raciocínio estruturado em etapas |
-| **webfetch / fetch_fetch** | Download de conteúdo de páginas web |
-| **omni-image-tools** | Ferramentas de imagem (visão + processamento) |
-
-### MCPs Criados por Alex (GitHub Pessoal)
-
-| MCP | Repositório | Status | Descrição |
-|-----|-------------|--------|-----------|
-| **minimax-image-mcp** | [alexlivre/minimax-image-mcp](https://github.com/alexlivre/minimax-image-mcp) | ✅ Público | Servidor MCP para geração de imagens MiniMax (image-01) |
-| **omni-image-tools-mcp** | [alexlivre/omni-image-tools-mcp](https://github.com/alexlivre/omni-image-tools-mcp) | 🔒 Privado | MCP de ferramentas de imagem (visão + processamento) com múltiplos provedores |
-| **pixabay-mcp** | [alexlivre/pixabay-mcp](https://github.com/alexlivre/pixabay-mcp) | 🔒 Privado | MCP para busca de imagens no Pixabay |
-| **imageHub-MCP** | [alexlivre/imageHub-MCP](https://github.com/alexlivre/imageHub-MCP) | 🔒 Privado | MCP hub de imagens |
-| **terminalvision-casca** | [alexlivre/terminalvision-casca](https://github.com/alexlivre/terminalvision-casca) | ✅ Público | Daemon de terminal para MCP (sessões PTY/Terminal) |
-
-### Outros Projetos Relacionados (GitHub Pessoal)
-
-| Projeto | Repositório | Descrição |
-|---------|-------------|-----------|
-| **guias** | [alexlivre/guias](https://github.com/alexlivre/guias) | Este repositório — guias e comandos |
-| **guia-minimax** | [alexlivre/guia-minimax](https://github.com/alexlivre/guia-minimax) | Guias e testes para API MiniMax |
-| **autonovel-minimax** | [alexlivre/autonovel-minimax](https://github.com/alexlivre/autonovel-minimax) | Pipeline de escrita autônoma com MiniMax |
-| **odysseus-minimax** | [alexlivre/odysseus-minimax](https://github.com/alexlivre/odysseus-minimax) | Odysseus com suporte nativo MiniMax |
-| **versatile-open-chat** | [alexlivre/versatile-open-chat](https://github.com/alexlivre/versatile-open-chat) | Chatbot multiplataforma com MiniMax |
-| **chatMax** | [alexlivre/chatMax](https://github.com/alexlivre/chatMax) | Wrapper API OpenAI-compatible para MiniMax |
+| MCP | Função | Referência |
+|-----|--------|------------|
+| **MiniMax_web_search** | Busca web geral (títulos + snippets + links) | `supermode.md`, `pesquisa.md` |
+| **webfetch / fetch_fetch** | Download de conteúdo de páginas web | `supermode.md`, `pesquisa.md` |
+| **github_search_repositories** | Busca repositórios no GitHub | `supermode.md`, `pesquisa.md` |
+| **github_search_code** | Busca código no GitHub | `supermode.md`, `pesquisa.md` |
+| **github_search_issues** | Busca issues no GitHub | `supermode.md`, `pesquisa.md` |
+| **sequential-thinking** | Raciocínio estruturado em etapas | `supermode.md`, `pesquisa.md` |
+| **MCP de análise de imagens** | Análise de imagens (quando disponível) | `supermode.md` (seção 3.2) |
 
 ---
 
@@ -93,7 +45,7 @@ Super Mode Ativado (/supermode)
 │
 ├── Tarefa recebida
 │   ├── Descobrir skills relevantes (ex: gerenciar-uv)
-│   ├── Descobrir MCPs disponíveis (GitHub, MiniMax, omni-image, etc.)
+│   ├── Descobrir MCPs disponíveis (MiniMax, GitHub, sequential-thinking)
 │   └── Classificar tipo de tarefa
 │
 ├── Fluxo baseado no tipo
