@@ -21,7 +21,8 @@ guias/
     │   ├── perguntas.md             # Análise somente leitura
     │   ├── pesquisa.md              # Pesquisa progressiva + plano
     │   └── supermode.md             # Modo persistente de excelência
-    └── skills/                      # Skills dos agentes (vazio)
+    └── skills/                      # Skills dos agentes
+        └── gerenciar-uv/            # Gerenciamento de ambientes Python com uv
 ```
 
 ---
