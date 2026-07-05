@@ -7,7 +7,6 @@ Repositório com guias práticos, código-fonte e testes automatizados contra AP
 ```
 guias/
 ├── guia-kokoro-openrouter.md        # Guia TTS Kokoro 82M
-├── MiniMax-guia-completo-image-01.md # Guia de imagens MiniMax
 │
 ├── guia-minimax/                    # Projeto Python completo
 │   ├── src/                         # Código-fonte (7 módulos)
@@ -40,23 +39,6 @@ Guia completo do modelo TTS (text-to-speech) Kokoro 82M.
 | Contexto | 4K caracteres por requisição |
 
 **Arquivo:** [`guia-kokoro-openrouter.md`](guia-kokoro-openrouter.md)
-
----
-
-### MiniMax Image Generation (image-01)
-
-Guia completo da API de geração de imagens MiniMax.
-
-| Característica | Valor |
-|---|---|
-| Modelo | `image-01` |
-| Preço | $0.0035 por imagem |
-| Modos | Text-to-Image (T2I) + Image-to-Image (I2I) |
-| Lote | 1-9 imagens por requisição |
-| Aspect Ratios | 8 opções (1:1, 16:9, 4:3, etc.) |
-| Seed | Sim (reprodutibilidade) |
-
-**Arquivo:** [`MiniMax-guia-completo-image-01.md`](MiniMax-guia-completo-image-01.md)
 
 ---
 
