@@ -6,7 +6,8 @@ Repositório com guias práticos, código-fonte e testes automatizados contra AP
 
 ```
 guias/
-├── guia-kokoro-openrouter.md        # Guia TTS Kokoro 82M
+├── guias-openrouter/                # Guias OpenRouter
+│   └── guia-kokoro-openrouter.md    # Guia TTS Kokoro 82M
 │
 ├── guia-minimax/                    # Projeto Python completo
 │   ├── src/                         # Código-fonte (7 módulos)
@@ -38,7 +39,7 @@ Guia completo do modelo TTS (text-to-speech) Kokoro 82M.
 | Formato | MP3 ou PCM |
 | Contexto | 4K caracteres por requisição |
 
-**Arquivo:** [`guia-kokoro-openrouter.md`](guia-kokoro-openrouter.md)
+**Arquivo:** [`guias-openrouter/guia-kokoro-openrouter.md`](guias-openrouter/guia-kokoro-openrouter.md)
 
 ---
 
