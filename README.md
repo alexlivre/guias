@@ -15,11 +15,13 @@ guias/
 │   ├── guia/                        # Guia gerado (1359 linhas)
 │   └── ...
 │
-└── commands/                        # Comandos personalizados OpenCode CLI
-    ├── commands_maker.md            # Meta-comando: cria outros comandos
-    ├── perguntas.md                 # Análise somente leitura
-    ├── pesquisa.md                  # Pesquisa progressiva + plano
-    └── supermode.md                 # Modo persistente de excelência
+└── agents/                          # Configuração de agentes OpenCode
+    ├── commands/                    # Comandos personalizados CLI
+    │   ├── commands_maker.md        # Meta-comando: cria outros comandos
+    │   ├── perguntas.md             # Análise somente leitura
+    │   ├── pesquisa.md              # Pesquisa progressiva + plano
+    │   └── supermode.md             # Modo persistente de excelência
+    └── skills/                      # Skills dos agentes (vazio)
 ```
 
 ---

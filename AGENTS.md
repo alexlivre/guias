@@ -8,7 +8,8 @@ Coleção de guias práticos para APIs de IA, com código-fonte e testes reais. 
 
 - `guias-openrouter/` — Guias de APIs OpenRouter (Kokoro TTS)
 - `guia-minimax/` — Projeto Python com 38 testes contra API real MiniMax
-- `commands/` — Comandos personalizados OpenCode CLI (em português)
+- `agents/commands/` — Comandos personalizados OpenCode CLI (em português)
+- `agents/skills/` — Skills dos agentes (vazio)
 
 ## Gotcha crítico: testes custam dinheiro
 
@@ -26,7 +27,7 @@ Pular benchmarks lentos: `pytest tests/ --ignore=tests/test_performance.py -v`
 ## Convenções
 
 - **Idioma:** Todo o conteúdo (guias, comandos, README) é em português brasileiro
-- **Comandos OpenCode:** Estão em `commands/`, usam frontmatter YAML com `description`, trigger no formato `/nome-do-comando`
+- **Comandos OpenCode:** Estão em `agents/commands/`, usam frontmatter YAML com `description`, trigger no formato `/nome-do-comando`
 - **Guia gerado:** O resultado dos testes vai para `guia-minimax/guia/guia-minimax-api.md` — atualizar quando testes verificarem nova funcionalidade
 - **Não versionar:** `.env`, `.venv/`, `__pycache__/`, `img/`, `test_output/`
 
