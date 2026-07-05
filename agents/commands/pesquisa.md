@@ -10,6 +10,8 @@ Analise cuidadosamente essa tarefa.
 
 **Antes de qualquer ação, use a ferramenta `skill` para verificar quais skills estão disponíveis e relevantes para esta tarefa. Carregue e siga todas as skills aplicáveis.** (Ex: brainstorming, TDD, clean-code, debugging, etc.)
 
+**Se a tarefa envolver Python** (criar projeto, script, API, etc.), carregue também a skill `gerenciar-uv` — ela cuida do ambiente isolado automaticamente.
+
 Depois, realize uma **pesquisa progressiva em múltiplas rodadas** usando as ferramentas disponíveis:
 
 **Ferramentas obrigatórias:**
@@ -48,6 +50,8 @@ Após a pesquisa progressiva, crie um **plano completo de implementação** com 
 
 5. **Plano de Implementação Detalhado**  
    (Passos em ordem, com explicação técnica de cada etapa)
+   
+   **Nota Python:** Se o plano envolver código Python, o primeiro passo deve ser: "Usar skill `gerenciar-uv` para criar ambiente isolado e instalar dependências".
 
 6. **Tecnologias / Ferramentas Sugeridas**
 

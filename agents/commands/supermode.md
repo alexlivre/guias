@@ -35,6 +35,12 @@ Analise a mensagem do usuário e classifique o **tipo de tarefa**. Com base niss
 
 Para cada tipo, siga o fluxo correspondente (pesquisa progressiva, correção com debugging, implementação direta, etc.) conforme detalhado no original.
 
+#### 2.1. Detecção de Python
+Se a tarefa envolver Python (criar projeto, instalar pacotes, rodar scripts, configurar ambiente):
+- Carregue a skill `gerenciar-uv`
+- Siga o fluxo de criação de ambiente antes de qualquer implementação
+- Nunca use `pip` ou `venv` tradicional — sempre `uv`
+
 ### 3. Ferramentas/MCPs — Uso Dinâmico e Tratamento de Imagens
 
 #### 3.1. Lista base de MCPs (sempre disponíveis quando presentes no ambiente)
