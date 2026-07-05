@@ -32,7 +32,7 @@ Super Mode é um **modo de operação persistente** que combina comandos e skill
 | **github_search_code** | Busca código | [GitHub MCP Server](https://github.com/github/github-mcp-server) | [`supermode.md:51`](agents/commands/supermode.md#L51), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
 | **github_search_issues** | Busca issues | [GitHub MCP Server](https://github.com/github/github-mcp-server) | [`supermode.md:52`](agents/commands/supermode.md#L52), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
 | **sequential-thinking** | Raciocínio estruturado | [NPM](https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking), [GitHub](https://github.com/modelcontextprotocol/servers) | [`supermode.md:53`](agents/commands/supermode.md#L53), [`pesquisa.md:21`](agents/commands/pesquisa.md#L21) |
-| **MCP de análise de imagens** | Análise de imagens | Verificar MCP disponível no ambiente | [`supermode.md:54`](agents/commands/supermode.md#L54), [`supermode.md:58-63`](agents/commands/supermode.md#L58) |
+| **MCP de análise de imagens** | Análise de imagens | [omni-image-tools-mcp](https://github.com/alexlivre/omni-image-tools-mcp) | [`supermode.md:54`](agents/commands/supermode.md#L54), [`supermode.md:58-63`](agents/commands/supermode.md#L58) |
 
 ---
 
