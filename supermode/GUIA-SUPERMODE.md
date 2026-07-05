@@ -24,15 +24,15 @@ Super Mode é um **modo de operação persistente** que combina comandos e skill
 
 ### MCPs
 
-| MCP | Função | Onde é usado |
-|-----|--------|--------------|
-| **MiniMax_web_search** | Busca web geral (títulos + snippets + links) | [`supermode.md:48`](agents/commands/supermode.md#L48), [`pesquisa.md:18`](agents/commands/pesquisa.md#L18), [`pesquisa.md:25`](agents/commands/pesquisa.md#L25) |
-| **webfetch / fetch_fetch** | Download de conteúdo de páginas web | [`supermode.md:49`](agents/commands/supermode.md#L49), [`pesquisa.md:19`](agents/commands/pesquisa.md#L19), [`pesquisa.md:25`](agents/commands/pesquisa.md#L25) |
-| **github_search_repositories** | Busca repositórios no GitHub | [`supermode.md:50`](agents/commands/supermode.md#L50), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
-| **github_search_code** | Busca código no GitHub | [`supermode.md:51`](agents/commands/supermode.md#L51), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
-| **github_search_issues** | Busca issues no GitHub | [`supermode.md:52`](agents/commands/supermode.md#L52), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
-| **sequential-thinking** | Raciocínio estruturado em etapas | [`supermode.md:53`](agents/commands/supermode.md#L53), [`supermode.md:66-67`](agents/commands/supermode.md#L66), [`pesquisa.md:21`](agents/commands/pesquisa.md#L21), [`pesquisa.md:31`](agents/commands/pesquisa.md#L31), [`pesquisa.md:46`](agents/commands/pesquisa.md#L46), [`pesquisa.md:59`](agents/commands/pesquisa.md#L59) |
-| **MCP de análise de imagens** | Análise de imagens (quando disponível) | [`supermode.md:54`](agents/commands/supermode.md#L54), [`supermode.md:58-63`](agents/commands/supermode.md#L58) |
+| MCP | Função | Links | Onde é usado |
+|-----|--------|-------|--------------|
+| **MiniMax_web_search** | Busca web geral | [MiniMax Docs](https://platform.minimax.io/docs/llms.txt) | [`supermode.md:48`](agents/commands/supermode.md#L48), [`pesquisa.md:18`](agents/commands/pesquisa.md#L18) |
+| **webfetch / fetch_fetch** | Download de páginas web | [OpenCode Docs](https://opencode.ai/docs/mcp-servers/) | [`supermode.md:49`](agents/commands/supermode.md#L49), [`pesquisa.md:19`](agents/commands/pesquisa.md#L19) |
+| **github_search_repositories** | Busca repositórios | [GitHub MCP Server](https://github.com/github/github-mcp-server) | [`supermode.md:50`](agents/commands/supermode.md#L50), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
+| **github_search_code** | Busca código | [GitHub MCP Server](https://github.com/github/github-mcp-server) | [`supermode.md:51`](agents/commands/supermode.md#L51), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
+| **github_search_issues** | Busca issues | [GitHub MCP Server](https://github.com/github/github-mcp-server) | [`supermode.md:52`](agents/commands/supermode.md#L52), [`pesquisa.md:20`](agents/commands/pesquisa.md#L20) |
+| **sequential-thinking** | Raciocínio estruturado | [NPM](https://www.npmjs.com/package/@modelcontextprotocol/server-sequential-thinking), [GitHub](https://github.com/modelcontextprotocol/servers) | [`supermode.md:53`](agents/commands/supermode.md#L53), [`pesquisa.md:21`](agents/commands/pesquisa.md#L21) |
+| **MCP de análise de imagens** | Análise de imagens | Verificar MCP disponível no ambiente | [`supermode.md:54`](agents/commands/supermode.md#L54), [`supermode.md:58-63`](agents/commands/supermode.md#L58) |
 
 ---
 
