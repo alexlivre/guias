@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HKCU\Environment — Guia do Registro do Windows</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-primary: #0d1117;
+    --bg-secondary: #161b22;
+    --bg-tertiary: #21262d;
+    --border: #30363d;
+    --text-primary: #e6edf3;
+    --text-secondary: #8b949e;
+    --accent-green: #3fb950;
+    --accent-blue: #58a6ff;
+    --accent-amber: #d29922;
+    --accent-red: #f85149;
+    --accent-purple: #bc8cff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--bg-primary);
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .terminal-card {
+    background: #0a0e14;
+    border: 1px solid #1a1f2e;
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .terminal-header {
+    background: #1a1f2e;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid #2d3548;
+  }
+
+  .terminal-dot {
+    width: 12px; height: 12px; border-radius: 50%;
+  }
+
+  .terminal-dot.red { background: #ff5f56; }
+  .terminal-dot.yellow { background: #ffbd2e; }
+  .terminal-dot.green { background: #27c93f; }
+
+  .terminal-body {
+    padding: 20px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.8;
+    color: #e6edf3;
+    height: 310px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .terminal-prompt { color: var(--accent-green); }
+  .terminal-command { color: #e6edf3; }
+  .terminal-output { color: var(--text-secondary); }
+  .terminal-cursor {
+    display: inline-block;
+    width: 8px;
+    height: 16px;
+    background: var(--accent-green);
+    animation: blink 1s step-end infinite;
+    vertical-align: text-bottom;
+    margin-left: 2px;
+  }
+
+  @keyframes blink {
+    50% { opacity: 0; }
+  }
+
+  .cmd-block {
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 14px 18px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    position: relative;
+    transition: border-color .2s;
+  }
+
+  .cmd-block:hover { border-color: var(--accent-blue); }
+
+  .copy-btn {
+    position: absolute;
+    top: 8px; right: 8px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    color: var(--text-secondary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-family: 'Inter', sans-serif;
+    transition: all .2s;
+    opacity: 0;
+  }
+
+  .cmd-block:hover .copy-btn { opacity: 1; }
+  .copy-btn:hover { background: var(--bg-tertiary); color: var(--text-primary); border-color: var(--accent-blue); }
+  .copy-btn.copied { background: #1a3a2a; border-color: var(--accent-green); color: var(--accent-green); }
+
+  .glow-green { box-shadow: 0 0 20px rgba(63,185,80,.08); }
+  .glow-blue { box-shadow: 0 0 20px rgba(88,166,255,.08); }
+
+  .section-link {
+    scroll-margin-top: 100px;
+  }
+
+  .scope-card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    transition: all .3s;
+    cursor: default;
+  }
+
+  .scope-card.active {
+    border-color: var(--accent-green);
+    box-shadow: 0 0 24px rgba(63,185,176,.06);
+  }
+
+  .scope-badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  .badge-process { background: rgba(88,166,255,.15); color: var(--accent-blue); }
+  .badge-user { background: rgba(63,185,80,.15); color: var(--accent-green); }
+  .badge-machine { background: rgba(188,140,255,.15); color: var(--accent-purple); }
+
+  .comp-row {
+    display: grid;
+    grid-template-columns: 160px 1fr;
+    gap: 12px;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    align-items: start;
+  }
+
+  .comp-row:last-child { border-bottom: none; }
+  .comp-label { font-weight: 600; font-size: 14px; color: var(--text-secondary); }
+
+  .accordion-trigger {
+    cursor: pointer;
+    user-select: none;
+  }
+
+  .accordion-content {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .4s ease, padding .3s ease;
+    padding: 0 4px;
+  }
+
+  .accordion-content.open {
+    max-height: 600px;
+    padding: 16px 4px;
+  }
+
+  .step-circle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border);
+    font-weight: 700;
+    font-size: 14px;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+  }
+
+  .step-line {
+    width: 2px;
+    flex: 1;
+    background: var(--border);
+    margin: 4px 0;
+  }
+
+  .step-line.completed { background: var(--accent-green); }
+  .step-circle.completed { background: rgba(63,185,80,.15); border-color: var(--accent-green); color: var(--accent-green); }
+
+  .toast-msg {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    background: var(--bg-secondary);
+    border: 1px solid var(--accent-green);
+    color: var(--accent-green);
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all .3s;
+    z-index: 999;
+    pointer-events: none;
+  }
+
+  .toast-msg.show {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, #0d1117 0%, #161b22 50%, #0d1117 100%);
+  }
+
+  .grid-pattern {
+    background-image:
+      linear-gradient(rgba(48,54,61,.3) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(48,54,61,.3) 1px, transparent 1px);
+    background-size: 40px 40px;
+  }
+
+  .table-wrap { overflow-x: auto; }
+  .table-wrap table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  .table-wrap th {
+    text-align: left;
+    padding: 12px 16px;
+    background: var(--bg-tertiary);
+    border-bottom: 2px solid var(--border);
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .table-wrap td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  .table-wrap tr:last-child td { border-bottom: none; }
+  .table-wrap tr:hover td { background: rgba(255,255,255,.02); }
+
+  .tag {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .tag-yes { background: rgba(63,185,80,.15); color: var(--accent-green); }
+  .tag-no { background: rgba(248,81,73,.15); color: var(--accent-red); }
+  .tag-partial { background: rgba(210,153,34,.15); color: var(--accent-amber); }
+
+  ::selection { background: rgba(63,185,80,.3); }
+
+  @media (max-width: 768px) {
+    .comp-row { grid-template-columns: 1fr; gap: 4px; }
+    .table-wrap td, .table-wrap th { padding: 8px 10px; font-size: 13px; }
+  }
+
+  .fade-in-up {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .fade-in-up.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+</style>
+</head>
+<body>
+
+<div id="toast" class="toast-msg">Copiado!</div>
+
+<!-- NAV -->
+<nav class="sticky top-0 z-50 border-b" style="background:rgba(13,17,23,.85);border-color:var(--border);backdrop-filter:blur(12px);">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between h-14">
+    <span class="font-mono font-bold text-sm flex items-center gap-2">
+      <span style="color:var(--accent-green)">HKCU\</span>
+      <span style="color:var(--text-secondary)">Environment</span>
+    </span>
+    <div class="hidden sm:flex items-center gap-6 text-sm" style="color:var(--text-secondary)">
+      <a href="#comece" class="hover:text-white transition-colors">Comece Aqui</a>
+      <a href="#conceito" class="hover:text-white transition-colors">Conceito</a>
+      <a href="#comandos" class="hover:text-white transition-colors">Comandos</a>
+      <a href="#praticas" class="hover:text-white transition-colors">Boas Práticas</a>
+      <a href="#comparar" class="hover:text-white transition-colors">Comparar</a>
+      <a href="#faq" class="hover:text-white transition-colors">FAQ</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-gradient grid-pattern relative overflow-hidden">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-20 sm:py-28 relative z-10">
+    <div class="max-w-3xl">
+      <div class="flex items-center gap-2 mb-4">
+        <span class="tag" style="background:rgba(63,185,80,.15);color:var(--accent-green);font-size:11px">Windows</span>
+        <span class="tag" style="background:rgba(88,166,255,.15);color:var(--accent-blue);font-size:11px">PowerShell</span>
+        <span class="tag" style="background:rgba(188,140,255,.15);color:var(--accent-purple);font-size:11px">Registro</span>
+      </div>
+      <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight mb-4">
+        Variáveis de Ambiente
+        <br>
+        <span style="color:var(--accent-green)">no Registro do Windows</span>
+      </h1>
+      <p class="text-lg sm:text-xl mb-8" style="color:var(--text-secondary);max-width:600px">
+        Um guia visual e interativo sobre <code class="text-sm px-2 py-0.5 rounded" style="background:var(--bg-tertiary);color:var(--accent-green)">HKCU\Environment</code> — como criar, ler, gerenciar e deletar variáveis de ambiente de usuário no Windows.
+      </p>
+    </div>
+
+    <!-- TERMINAL DEMO -->
+    <div class="terminal-card glow-green max-w-2xl">
+      <div class="terminal-header">
+        <div class="flex gap-1.5">
+          <span class="terminal-dot red"></span>
+          <span class="terminal-dot yellow"></span>
+          <span class="terminal-dot green"></span>
+        </div>
+        <span style="color:#6b7a8f;font-size:11px;font-family:'JetBrains Mono',monospace">PowerShell 7 — alexb@workstation</span>
+      </div>
+      <div class="terminal-body" id="terminal-body">
+        <div id="terminal-content"></div>
+        <span class="terminal-prompt">PS&gt;</span>
+        <span id="terminal-typing"></span>
+        <span class="terminal-cursor"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMECE AQUI -->
+<section id="comece" class="py-16 sm:py-20" style="border-bottom:1px solid var(--border)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <div class="flex items-center gap-3 mb-6">
+      <span class="text-xs font-semibold uppercase tracking-widest" style="color:var(--accent-green)">Quick Start</span>
+      <span class="text-xs" style="color:var(--text-secondary)">3 passos para criar sua primeira variável</span>
+    </div>
+    <div class="grid sm:grid-cols-3 gap-4">
+
+      <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--accent-green)">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(63,185,80,.2);color:var(--accent-green)">1</span>
+          <span class="text-sm font-semibold" style="color:var(--accent-green)">Criar</span>
+        </div>
+        <div class="cmd-block" style="font-size:12px">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code style="color:var(--accent-green)">setx MINHA_CHAVE <span style="color:var(--accent-amber)">"valor"</span></code>
+        </div>
+      </div>
+
+      <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--accent-blue)">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(88,166,255,.2);color:var(--accent-blue)">2</span>
+          <span class="text-sm font-semibold" style="color:var(--accent-blue)">Verificar</span>
+        </div>
+        <div class="cmd-block" style="font-size:12px">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code style="color:var(--accent-blue)">echo %MINHA_CHAVE%</code>
+        </div>
+      </div>
+
+      <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--accent-red)">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(248,81,73,.2);color:var(--accent-red)">3</span>
+          <span class="text-sm font-semibold" style="color:var(--accent-red)">Remover</span>
+        </div>
+        <div class="cmd-block" style="font-size:12px">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code>reg delete <span style="color:var(--accent-amber)">HKCU\Environment</span> /v <span style="color:var(--accent-green)">MINHA_CHAVE</span> /f</code>
+        </div>
+      </div>
+
+    </div>
+    <p class="mt-4 text-sm" style="color:var(--text-secondary)">
+      Abra um <strong style="color:var(--text-primary)">novo terminal</strong> após criar — variáveis não aparecem na sessão atual.
+    </p>
+  </div>
+</section>
+
+<!-- CONCEITO -->
+<section id="conceito" class="section-link py-20 sm:py-24" style="border-bottom:1px solid var(--border)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color:var(--accent-green)">CONCEITO</span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 mb-4">O que é <code class="text-2xl" style="color:var(--accent-green)">HKCU\Environment</code>?</h2>
+    <p class="mb-6" style="color:var(--text-secondary);font-size:15px;max-width:700px">
+      É a chave do Registro do Windows que armazena as <strong style="color:var(--text-primary)">variáveis de ambiente do usuário</strong>.
+      Diferente de variáveis de sessão (que morrem quando o terminal fecha), variáveis no registro <strong style="color:var(--text-primary)">persistem entre sessões</strong> — incluindo reboots.
+      Tanto PowerShell quanto CMD (<code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">setx</code>) escrevem nestas mesmas chaves.
+    </p>
+    <div class="cmd-block mb-10">
+      <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+      <span class="font-mono text-sm" style="color:var(--accent-green)">HKEY_CURRENT_USER\Environment</span>
+      <br>
+      <span class="font-mono text-xs mt-1 block" style="color:var(--text-secondary)">Caminho no regedit</span>
+    </div>
+
+    <h3 class="text-xl font-bold mb-4">Os três escopos</h3>
+    <p class="mb-6 text-sm" style="color:var(--text-secondary);max-width:600px">
+      Cada escopo tem propósito, localização e nível de persistência diferentes:
+    </p>
+
+    <div class="table-wrap rounded-xl border mb-8" style="border-color:var(--border)">
+      <table>
+        <thead>
+          <tr>
+            <th>Escopo</th>
+            <th>Localização</th>
+            <th>Persiste?</th>
+            <th>Admin?</th>
+            <th>PowerShell</th>
+            <th>CMD</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><span class="scope-badge badge-process" style="margin-bottom:4px">Process</span><br><span class="text-xs" style="color:var(--text-secondary)">Só este terminal</span></td>
+            <td><code class="text-xs">Memória (RAM)</code></td>
+            <td><span class="tag tag-no">Não</span></td>
+            <td><span class="tag tag-no">Não</span></td>
+            <td><code class="text-xs">$env:VAR = "valor"</code></td>
+            <td><code class="text-xs">set VAR=valor</code></td>
+          </tr>
+          <tr>
+            <td><span class="scope-badge badge-user" style="margin-bottom:4px">User</span><br><span class="text-xs" style="color:var(--text-secondary)">Seu usuário</span></td>
+            <td><code class="text-xs">HKCU\Environment</code></td>
+            <td><span class="tag tag-yes">Sim</span></td>
+            <td><span class="tag tag-no">Não</span></td>
+            <td><code class="text-xs">[Environment]::SetEnvironmentVariable("VAR", "valor", "User")</code></td>
+            <td><code class="text-xs">setx VAR "valor"</code></td>
+          </tr>
+          <tr>
+            <td><span class="scope-badge badge-machine" style="margin-bottom:4px">Machine</span><br><span class="text-xs" style="color:var(--text-secondary)">Todos os usuários</span></td>
+            <td><code class="text-xs">HKLM\...\Environment</code></td>
+            <td><span class="tag tag-yes">Sim</span></td>
+            <td><span class="tag tag-yes">Sim</span></td>
+            <td><code class="text-xs">[Environment]::SetEnvironmentVariable("VAR", "valor", "Machine")</code></td>
+            <td><code class="text-xs">setx VAR "valor" /m</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+      <h3 class="font-bold mb-3">🧠 Hierarquia de resolução</h3>
+      <p class="mb-4 text-sm" style="color:var(--text-secondary)">
+        Quando um processo lê <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">$env:VAR</code>, o Windows busca nesta ordem:
+      </p>
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6 text-sm font-mono">
+        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:var(--accent-blue)"></span> Process</span>
+        <span style="color:var(--text-secondary)" class="hidden sm:inline">→</span>
+        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:var(--accent-green)"></span> User (HKCU)</span>
+        <span style="color:var(--text-secondary)" class="hidden sm:inline">→</span>
+        <span class="flex items-center gap-2"><span class="w-3 h-3 rounded-full" style="background:var(--accent-purple)"></span> Machine (HKLM)</span>
+        <span style="color:var(--text-secondary)" class="hidden sm:inline">→</span>
+        <span style="color:var(--text-secondary)">System</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMANDOS -->
+<section id="comandos" class="section-link py-20 sm:py-24" style="border-bottom:1px solid var(--border)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color:var(--accent-amber)">COMANDOS</span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 mb-8">Criar, ler, listar e deletar</h2>
+
+    <!-- CRIAR -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(63,185,80,.2);color:var(--accent-green)">1</span>
+        <h3 class="text-lg font-semibold" style="color:var(--accent-green)">Criar / Atualizar</h3>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-4">
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code style="color:var(--accent-green)">[Environment]::SetEnvironmentVariable(<br>
+          <span class="ml-4">"VAR", "valor", <span style="color:var(--accent-amber)">"User"</span>)</span></code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="tag" style="background:rgba(210,153,34,.15);color:var(--accent-amber);font-size:10px;padding:2px 6px;margin-right:6px">CMD</span>
+          <code style="color:var(--accent-green)">setx VAR <span style="color:var(--accent-amber)">"valor"</span></code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="tag" style="background:rgba(210,153,34,.15);color:var(--accent-amber);font-size:10px;padding:2px 6px;margin-right:6px">CMD</span>
+          <code style="color:var(--accent-green)">setx VAR <span style="color:var(--accent-amber)">"valor"</span> <span style="color:var(--accent-purple)">/m</span></code>
+          <span class="tag tag-yes" style="font-size:10px;padding:2px 6px;margin-left:6px">admin</span>
+        </div>
+      </div>
+      <div class="p-4 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--accent-amber)">
+        <p class="text-sm" style="color:var(--text-secondary)">
+          <strong style="color:var(--accent-amber)">⚠️ Importante:</strong> variáveis não aparecem na sessão atual — abra um <strong style="color:var(--text-primary)">novo terminal</strong>.
+        </p>
+      </div>
+    </div>
+
+    <!-- LER -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(88,166,255,.2);color:var(--accent-blue)">2</span>
+        <h3 class="text-lg font-semibold" style="color:var(--accent-blue)">Ler</h3>
+      </div>
+      <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code style="color:var(--accent-blue)">$env:VAR</code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code style="color:var(--accent-blue)">Get-ItemPropertyValue<br>-Path <span style="color:var(--accent-amber)">"HKCU:\Environment"</span><br>-Name <span style="color:var(--accent-green)">"VAR"</span></code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="tag" style="background:rgba(210,153,34,.15);color:var(--accent-amber);font-size:10px;padding:2px 6px;margin-right:6px">CMD</span>
+          <code style="color:var(--accent-blue)">echo %VAR%</code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="tag" style="background:rgba(210,153,34,.15);color:var(--accent-amber);font-size:10px;padding:2px 6px;margin-right:6px">CMD</span>
+          <code style="color:var(--accent-blue)">reg query <span style="color:var(--accent-amber)">HKCU\Environment</span> /v <span style="color:var(--accent-green)">VAR</span></code>
+        </div>
+      </div>
+    </div>
+
+    <!-- LISTAR -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(188,140,255,.2);color:var(--accent-purple)">3</span>
+        <h3 class="text-lg font-semibold" style="color:var(--accent-purple)">Listar todas</h3>
+      </div>
+      <div class="grid sm:grid-cols-2 gap-4">
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code style="color:var(--accent-purple)">Get-ItemProperty -Path <span style="color:var(--accent-amber)">"HKCU:\Environment"</span></code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="tag" style="background:rgba(210,153,34,.15);color:var(--accent-amber);font-size:10px;padding:2px 6px;margin-right:6px">CMD</span>
+          <code style="color:var(--accent-purple)">reg query <span style="color:var(--accent-amber)">HKCU\Environment</span></code>
+        </div>
+      </div>
+    </div>
+
+    <!-- DELETAR -->
+    <div class="mb-10">
+      <div class="flex items-center gap-3 mb-4">
+        <span class="flex items-center justify-center w-7 h-7 rounded-full text-xs font-bold" style="background:rgba(248,81,73,.2);color:var(--accent-red)">4</span>
+        <h3 class="text-lg font-semibold" style="color:var(--accent-red)">Deletar</h3>
+      </div>
+      <div class="grid sm:grid-cols-3 gap-4">
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code>[Environment]::SetEnvironmentVariable(<span style="color:var(--accent-green)">"VAR"</span>, <span style="color:var(--accent-amber)">$null</span>, <span style="color:var(--accent-green)">"User"</span>)</code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code>Remove-ItemProperty -Path <span style="color:var(--accent-amber)">"HKCU:\Environment"</span> -Name <span style="color:var(--accent-green)">"VAR"</span></code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="tag" style="background:rgba(210,153,34,.15);color:var(--accent-amber);font-size:10px;padding:2px 6px;margin-right:6px">CMD</span>
+          <code>reg delete <span style="color:var(--accent-amber)">HKCU\Environment</span> /v <span style="color:var(--accent-green)">VAR</span> /f</code>
+        </div>
+      </div>
+    </div>
+
+    <!-- RECARREGAR + WARNINGS -->
+    <div class="grid lg:grid-cols-3 gap-4">
+      <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <h4 class="font-semibold text-sm mb-3">🔄 Recarregar sem abrir novo terminal</h4>
+        <div class="cmd-block" style="font-size:11px">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <code>foreach ($level in "Machine","User") {<br>
+          <span class="ml-4">[Environment]::GetEnvironmentVariables($level).GetEnumerator() | % {</span><br>
+          <span class="ml-8">Set-Item -Path "Env:\$($_.Name)" -Value $_.Value</span><br>
+          <span class="ml-4">}</span><br>
+          }</code>
+        </div>
+      </div>
+      <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--accent-red)">
+        <h4 class="font-semibold text-sm mb-2" style="color:var(--accent-red)">⚠️ setx: limite de 1024 chars</h4>
+        <p class="text-xs" style="color:var(--text-secondary)">
+          Trunca valores longos silenciosamente. Evite para PATH — use PowerShell.
+        </p>
+      </div>
+      <div class="p-5 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--accent-red)">
+        <h4 class="font-semibold text-sm mb-2" style="color:var(--accent-red)">⚠️ setx: %VAR% expandido</h4>
+        <p class="text-xs" style="color:var(--text-secondary)">
+          <code class="text-xs" style="background:var(--bg-tertiary)">setx PATH %PATH%;...</code> congela referências como <code class="text-xs" style="background:var(--bg-tertiary)">%JAVA_HOME%</code>. Use PowerShell para dinamismo.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BOAS PRÁTICAS -->
+<section id="praticas" class="section-link py-20 sm:py-24" style="border-bottom:1px solid var(--border)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color:var(--accent-green)">BOAS PRÁTICAS</span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 mb-8">Como usar bem</h2>
+
+    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="p-6 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="text-3xl mb-3">📛</div>
+        <h3 class="font-bold mb-2">Nomenclatura</h3>
+        <p class="text-sm mb-3" style="color:var(--text-secondary)">MAIÚSCULAS com underscores. Prefixo do projeto/serviço.</p>
+        <div class="cmd-block" style="font-size:12px">
+          <span style="color:var(--accent-green)">OPENROUTER_API_KEY</span><br>
+          <span style="color:var(--accent-blue)">GITHUB_TOKEN</span><br>
+          <span style="color:var(--accent-amber)">LOG_LEVEL=debug</span>
+        </div>
+      </div>
+
+      <div class="p-6 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="text-3xl mb-3">🔒</div>
+        <h3 class="font-bold mb-2">Segurança</h3>
+        <p class="text-sm" style="color:var(--text-secondary)">
+          Em máquina pessoal, env var User é suficiente para chaves de API.
+          Para senhas reais, prefira <strong style="color:var(--text-primary)">Credential Manager</strong> (<code class="text-xs px-1 py-0.5 rounded" style="background:var(--bg-tertiary)">cmdkey</code>).
+        </p>
+      </div>
+
+      <div class="p-6 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="text-3xl mb-3">🧹</div>
+        <h3 class="font-bold mb-2">Manutenção</h3>
+        <p class="text-sm" style="color:var(--text-secondary)">
+          Mantenha uma lista do que você criou. Documente em um <code class="text-xs px-1 py-0.5 rounded" style="background:var(--bg-tertiary)">SETUP.md</code>.
+          Limpe variáveis que não usa mais.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARAR -->
+<section id="comparar" class="section-link py-20 sm:py-24" style="border-bottom:1px solid var(--border)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color:var(--accent-purple)">ARMAZENAMENTO</span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 mb-2">Métodos de armazenamento de configs</h2>
+    <p class="mb-10" style="color:var(--text-secondary);font-size:15px;max-width:600px">Variáveis de ambiente do registro são só um método. Compare com alternativas para escolher o mais adequado ao seu caso.</p>
+
+    <div class="table-wrap rounded-xl border" style="border-color:var(--border)">
+      <table>
+        <thead>
+          <tr>
+            <th>Método</th>
+            <th>Criptografia</th>
+            <th>Fácil de trocar?</th>
+            <th>Melhor para</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>HKCU\Environment</strong></td>
+            <td><span class="tag tag-no">Texto plano</span></td>
+            <td><span class="tag tag-yes">✅ Fácil</span></td>
+            <td>Chaves de API, configs de dev</td>
+          </tr>
+          <tr>
+            <td><strong>Credential Manager</strong></td>
+            <td><span class="tag tag-yes">Criptografado</span></td>
+            <td><span class="tag tag-partial">⚠️ Médio</span></td>
+            <td>Senhas, tokens sensíveis</td>
+          </tr>
+          <tr>
+            <td><strong>Arquivo .env</strong></td>
+            <td><span class="tag tag-no">Texto plano</span></td>
+            <td><span class="tag tag-yes">✅ Fácil</span></td>
+            <td>Configs de projeto (versionado?)</td>
+          </tr>
+          <tr>
+            <td><strong>DPAPI</strong></td>
+            <td><span class="tag tag-yes">Criptografado</span></td>
+            <td><span class="tag tag-no">❌ Complexo</span></td>
+            <td>Máximo nível de segurança</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Credential Manager example -->
+    <div class="mt-8 p-6 rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+      <h3 class="font-bold mb-2">🔐 Credential Manager (cmdkey)</h3>
+      <p class="mb-4" style="color:var(--text-secondary);font-size:14px">
+        Se preferir segurança criptografada, o Credential Manager do Windows é uma alternativa ao registro:
+      </p>
+      <div class="grid md:grid-cols-2 gap-4">
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="text-xs" style="color:var(--text-secondary)">Salvar</span><br>
+          <code>cmdkey /generic:OPENROUTER_API_KEY /user:token /pass:<span style="color:var(--accent-green)">"sk-or-v1-..."</span></code>
+        </div>
+        <div class="cmd-block">
+          <button class="copy-btn" onclick="copyCmd(this)">Copiar</button>
+          <span class="text-xs" style="color:var(--text-secondary)">Listar</span><br>
+          <code>cmdkey /list</code>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SOLUÇÃO DE PROBLEMAS -->
+<section id="faq" class="section-link py-20 sm:py-24">
+  <div class="max-w-4xl mx-auto px-4 sm:px-6">
+    <span class="text-xs font-semibold uppercase tracking-widest" style="color:var(--accent-amber)">FAQ</span>
+    <h2 class="text-3xl sm:text-4xl font-extrabold mt-2 mb-8">Solução de Problemas</h2>
+
+    <div class="space-y-3" id="faq-accordion">
+
+      <div class="rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="accordion-trigger p-5 font-semibold text-sm flex items-center justify-between" onclick="toggleAccordion(this)">
+          <span>"SetEnvironmentVariable não funciona"</span>
+          <span style="color:var(--text-secondary);font-size:20px">+</span>
+        </div>
+        <div class="accordion-content px-5">
+          <p style="color:var(--text-secondary);font-size:14px">
+            Se estiver usando <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">"Machine"</code>, precisa executar o PowerShell <strong>como Administrador</strong>.
+            Para <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">"User"</code>, qualquer terminal funciona.
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="accordion-trigger p-5 font-semibold text-sm flex items-center justify-between" onclick="toggleAccordion(this)">
+          <span>"Criei mas $env:VAR continua vazia"</span>
+          <span style="color:var(--text-secondary);font-size:20px">+</span>
+        </div>
+        <div class="accordion-content px-5">
+          <p style="color:var(--text-secondary);font-size:14px">
+            Comportamento esperado. Variáveis User só carregam em <strong>sessões novas</strong>.
+            Solução: abra um novo terminal ou use o script de recarregamento da seção "Carregar na sessão atual".
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="accordion-trigger p-5 font-semibold text-sm flex items-center justify-between" onclick="toggleAccordion(this)">
+          <span>"Como confirmar que foi salva?"</span>
+          <span style="color:var(--text-secondary);font-size:20px">+</span>
+        </div>
+        <div class="accordion-content px-5">
+          <p style="color:var(--text-secondary);font-size:14px">
+            Use <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">Get-ItemProperty -Path "HKCU:\Environment" -Name "MINHA_VAR" -ErrorAction SilentlyContinue</code>.
+            Se retornar o valor → salva. Se retornar erro → não existe.
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="accordion-trigger p-5 font-semibold text-sm flex items-center justify-between" onclick="toggleAccordion(this)">
+          <span>"Variável aparece no registro mas não no terminal"</span>
+          <span style="color:var(--text-secondary);font-size:20px">+</span>
+        </div>
+        <div class="accordion-content px-5">
+          <p style="color:var(--text-secondary);font-size:14px">
+            O Windows notifica processos via <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">WM_SETTINGCHANGE</code>.
+            Se não funcionou, force com <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">[Environment]::SetEnvironmentVariable("VAR", "valor", "User")</code>
+            ou reinicie o Explorer: <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">Stop-Process -Name explorer -Force</code>.
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="accordion-trigger p-5 font-semibold text-sm flex items-center justify-between" onclick="toggleAccordion(this)">
+          <span>"Quero remover uma variável que criei"</span>
+          <span style="color:var(--text-secondary);font-size:20px">+</span>
+        </div>
+        <div class="accordion-content px-5">
+          <p style="color:var(--text-secondary);font-size:14px">
+            PowerShell: <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">Remove-ItemProperty -Path "HKCU:\Environment" -Name "VAR_INDESEJADA"</code>
+            <br><br>
+            CMD: <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">reg delete HKCU\Environment /v VAR_INDESEJADA /f</code>
+            <br><br>
+            <span style="color:var(--accent-amber)">⚠️</span> <code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">setx VAR ""</code> <strong>não remove</strong> — apenas zera o valor, mas a entrada no registro continua lá.
+          </p>
+        </div>
+      </div>
+
+      <div class="rounded-xl" style="background:var(--bg-secondary);border:1px solid var(--border)">
+        <div class="accordion-trigger p-5 font-semibold text-sm flex items-center justify-between" onclick="toggleAccordion(this)">
+          <span>"Qual a diferença entre setx e PowerShell?"</span>
+          <span style="color:var(--text-secondary);font-size:20px">+</span>
+        </div>
+        <div class="accordion-content px-5">
+          <p style="color:var(--text-secondary);font-size:14px">
+            Os dois escrevem no mesmo lugar do registro (<code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">HKCU\Environment</code>). A diferença prática:
+          </p>
+          <ul style="color:var(--text-secondary);font-size:14px;list-style:disc;padding-left:20px;margin-top:8px">
+            <li class="mb-1"><strong style="color:var(--text-primary)">setx</strong>: funciona em CMD e scripts .bat, mas tem <strong>limite de 1024 caracteres</strong> e <strong>expande variáveis</strong> (<code class="text-xs px-1.5 py-0.5 rounded" style="background:var(--bg-tertiary)">%PATH%</code> vira texto fixo)</li>
+            <li><strong style="color:var(--text-primary)">PowerShell</strong>: sem limite prático, não expande referências, ideal para PATH e valores longos</li>
+          </ul>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer style="border-top:1px solid var(--border);background:var(--bg-secondary)">
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <span class="text-sm" style="color:var(--text-secondary)">
+      <span class="font-mono" style="color:var(--accent-green)">HKCU\Environment</span> — Guia didático
+    </span>
+    <span class="text-xs" style="color:var(--text-secondary)">
+      Windows + PowerShell + Registro
+    </span>
+  </div>
+</footer>
+
+<script>
+// Toast
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+// Copy command
+function copyCmd(btn) {
+  const block = btn.closest('.cmd-block');
+  const code = block.querySelector('code') || block;
+  const text = code.textContent.trim().replace(/\s+/g, ' ').replace(/Copy$/, '').trim();
+  navigator.clipboard.writeText(text).then(() => {
+    btn.textContent = 'Copiado!';
+    btn.classList.add('copied');
+    showToast('Copiado!');
+    setTimeout(() => {
+      btn.textContent = 'Copiar';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+// Accordion
+function toggleAccordion(el) {
+  const content = el.nextElementSibling;
+  const icon = el.querySelector('span:last-child');
+  const isOpen = content.classList.contains('open');
+  document.querySelectorAll('.accordion-content.open').forEach(c => c.classList.remove('open'));
+  document.querySelectorAll('.accordion-trigger .open').forEach(i => i?.classList.remove('open'));
+  if (!isOpen) {
+    content.classList.add('open');
+    if (icon) icon.textContent = '−';
+    el.querySelector('span:last-child').textContent = '−';
+  } else {
+    el.querySelector('span:last-child').textContent = '+';
+  }
+}
+
+// Terminal typing
+const lines = [
+  { prompt: 'PS>', cmd: '# Criar variável no registro', cls: 'text-xs', color: '#8b949e' },
+  { prompt: 'PS>', cmd: '[Environment]::SetEnvironmentVariable("OPENROUTER_API_KEY", "sk-or-v1-...", "User")', cls: '', color: '#e6edf3' },
+  { prompt: '', cmd: '', cls: '', color: '' },
+  { prompt: 'PS>', cmd: '# Verificar se salvou', cls: 'text-xs', color: '#8b949e' },
+  { prompt: 'PS>', cmd: 'Get-ItemPropertyValue -Path "HKCU:\\Environment" -Name "OPENROUTER_API_KEY"', cls: '', color: '#58a6ff' },
+  { prompt: '', cmd: 'sk-or-v1-93df8f63...', cls: '', color: '#3fb950' },
+  { prompt: '', cmd: '', cls: '', color: '' },
+  { prompt: 'PS>', cmd: '# Ler na sessão atual', cls: 'text-xs', color: '#8b949e' },
+  { prompt: 'PS>', cmd: '$env:OPENROUTER_API_KEY', cls: '', color: '#58a6ff' },
+  { prompt: '', cmd: 'sk-or-v1-93df8f63...', cls: '', color: '#3fb950' },
+];
+
+let lineIdx = 0;
+let charIdx = 0;
+let currentLine = null;
+const typingEl = document.getElementById('terminal-typing');
+const contentEl = document.getElementById('terminal-content');
+
+function typeLine() {
+  if (lineIdx >= lines.length) {
+    // restart
+    setTimeout(() => {
+      lineIdx = 0;
+      charIdx = 0;
+      contentEl.innerHTML = '';
+      typeLine();
+    }, 4000);
+    return;
+  }
+  const line = lines[lineIdx];
+  if (!line.cmd) {
+    // blank line
+    contentEl.innerHTML += '<br>';
+    lineIdx++;
+    setTimeout(typeLine, 200);
+    return;
+  }
+  if (charIdx === 0) {
+    typingEl.textContent = '';
+    currentLine = line;
+  }
+  if (charIdx < line.cmd.length) {
+    typingEl.textContent += line.cmd[charIdx];
+    charIdx++;
+    setTimeout(typeLine, 15 + Math.random() * 25);
+  } else {
+    // line complete
+    const span = document.createElement('span');
+    span.style.cssText = `color:${line.color};font-size:${line.cls || 'inherit'};display:block`;
+    if (line.prompt) {
+      const prompt = document.createElement('span');
+      prompt.style.cssText = 'color:#3fb950';
+      prompt.textContent = line.prompt + ' ';
+      span.appendChild(prompt);
+    }
+    span.appendChild(document.createTextNode(line.cmd));
+    contentEl.appendChild(span);
+    typingEl.textContent = '';
+    charIdx = 0;
+    lineIdx++;
+    setTimeout(typeLine, 400 + Math.random() * 300);
+  }
+}
+
+setTimeout(typeLine, 800);
+
+// Scroll reveal
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1 });
+
+document.querySelectorAll('.fade-in-up').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
